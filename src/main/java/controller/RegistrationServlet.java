@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Event;
+import model.Participant;
 import repository.EventRepo;
 import repository.ParticipantRepo;
 import service.EventService;
 
 import java.io.IOException;
+import java.util.List;
 
 // ця адреса буде ловити запити сторінки конкретного заходу
 @WebServlet("/event")
@@ -32,10 +34,15 @@ public class RegistrationServlet extends HttpServlet {
         // беремо id заходу з урл
         int id = Integer.parseInt(req.getParameter("id"));
         Event event = eventRepo.getById(id);
+        List<Participant> pList = partRepo.getByEventId(id);
+
+        // рахуємо вільні місця
+        int remainingSeats = event.getMaxSeats() - pList.size();
 
         // передаємо дані заходу і список студентів на хтмл
         req.setAttribute("event", event);
-        req.setAttribute("participants", partRepo.getByEventId(id));
+        req.setAttribute("participants", pList);
+        req.setAttribute("remainingSeats", remainingSeats); // ПЕРЕДАЄМО НА ФРОНТ
 
         req.getRequestDispatcher("/WEB-INF/event_detail.jsp").forward(req, resp);
     }
@@ -53,9 +60,15 @@ public class RegistrationServlet extends HttpServlet {
         if (!success) {
             // МІСЦЬ НЕМАЄ: кидаємо помилку
             req.setAttribute("error", "На жаль, вільних місць більше немає!");
+
             // треба знову передати дані, щоб сторінка нормально відмалювалась
-            req.setAttribute("event", eventRepo.getById(eventId));
-            req.setAttribute("participants", partRepo.getByEventId(eventId));
+            Event event = eventRepo.getById(eventId);
+            List<Participant> pList = partRepo.getByEventId(eventId);
+
+            req.setAttribute("event", event);
+            req.setAttribute("participants", pList);
+            req.setAttribute("remainingSeats", event.getMaxSeats() - pList.size()); // ПЕРЕДАЄМО ЗАЛИШОК
+
             req.getRequestDispatcher("/WEB-INF/event_detail.jsp").forward(req, resp);
             return;
         }
