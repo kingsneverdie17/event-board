@@ -42,4 +42,28 @@ public class ParticipantRepo {
         }
         return count;
     }
+    // Метод, щоб дістати всіх студентів, які записались на конкретний захід
+    public java.util.List<Participant> getByEventId(int eventId) {
+        java.util.List<Participant> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM participants WHERE event_id = ?";
+
+        try (java.sql.Connection conn = Database.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, eventId);
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Participant p = new Participant();
+                    p.setId(rs.getInt("id"));
+                    p.setEventId(rs.getInt("event_id"));
+                    p.setStudentName(rs.getString("student_name"));
+                    p.setStudentEmail(rs.getString("student_email"));
+                    list.add(p);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }
