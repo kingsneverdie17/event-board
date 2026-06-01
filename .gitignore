@@ -37,3 +37,13 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/.smarttomcat/Event-board/conf/server.xml
+/.smarttomcat/Event-board/conf/tomcat-users.xml
+/.smarttomcat/Event-board/conf/catalina.policy
+/.smarttomcat/Event-board/conf/catalina.properties
+/.smarttomcat/Event-board/conf/jaspic-providers.xml
+/.smarttomcat/Event-board/conf/jaspic-providers.xsd
+/.smarttomcat/Event-board/conf/logging.properties
+/.smarttomcat/Event-board/conf/context.xml
+/.smarttomcat/Event-board/conf/web.xml
+/.smarttomcat/Event-board/conf/tomcat-users.xsd
